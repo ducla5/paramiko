@@ -17,7 +17,7 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
 
 
-import os
+import os,sys
 import shlex
 import signal
 from select import select
@@ -94,6 +94,9 @@ class ProxyCommand(ClosingContextManager):
         :return: the string of bytes read, which may be shorter than requested
         """
         try:
+            if sys.platform == 'win32':
+                return os.read(self.process.stdout.fileno(), size)
+
             buffer = b""
             start = time.time()
             while len(buffer) < size:
